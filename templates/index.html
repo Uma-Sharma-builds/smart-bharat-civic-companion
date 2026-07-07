@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Bharat Sahayak</title>
+<style>
+  body{font-family:Arial,sans-serif;background:#f4f6fb;margin:0;display:flex;justify-content:center}
+  .wrap{max-width:600px;width:100%;padding:20px}
+  h1{color:#1a3c8f;text-align:center;font-size:22px}
+  #chat{background:#fff;border-radius:10px;padding:15px;height:400px;overflow-y:auto;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .msg{margin:8px 0;padding:8px 12px;border-radius:8px;max-width:80%}
+  .user{background:#1a3c8f;color:#fff;margin-left:auto}
+  .bot{background:#e9edf7;color:#222}
+  form{display:flex;margin-top:10px}
+  input{flex:1;padding:10px;border:1px solid #ccc;border-radius:6px}
+  button{margin-left:8px;padding:10px 16px;background:#1a3c8f;color:#fff;border:none;border-radius:6px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🇮🇳 Smart Bharat Sahayak</h1>
+  <p style="text-align:center;color:#555">AI-Powered Civic Companion</p>
+  <div id="chat"></div>
+  <form id="form">
+    <input id="input" placeholder="Apna sawal ya issue likhein..." autocomplete="off"/>
+    <button type="submit">Send</button>
+  </form>
+</div>
+<script>
+const chat = document.getElementById('chat');
+const form = document.getElementById('form');
+const input = document.getElementById('input');
+
+function addMsg(text, cls){
+  const d = document.createElement('div');
+  d.className = 'msg ' + cls;
+  d.innerText = text;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+addMsg("Namaste! Main aapka Civic AI Companion hoon. Government services, complaints, ya documents ke baare mein poochiye.", "bot");
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = input.value.trim();
+  if(!msg) return;
+  addMsg(msg, 'user');
+  input.value = '';
+  addMsg("Typing...", 'bot');
+  const res = await fetch('/api/chat', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({message: msg})
+  });
+  const data = await res.json();
+  chat.removeChild(chat.lastChild);
+  addMsg(data.reply, 'bot');
+});
+</script>
+</body>
+</html>
